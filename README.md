@@ -6,13 +6,13 @@ This project is fairly straightforward: it accepts TCP connections on a variety 
 
 ## Day 1 log
 
-Spent about 3-4 hours today working on this
-Spent a good amount of time trying to figure out a clean way to spoof the calling IP address - resigned myself to faking it while running locally
-Spent some time trying to write a more complex script that pinged the service to generate test data while spoofing the calling IP address, decided to just spoof it in the code itself and make a simple bash script tomorrow
-Learned a decent amount about the way port management works on the OS level when calling TCP level resources
-Was concerned about listening on the HTTP vs the TCP/IP level, but given the complexity around handling http requests gracefully opted to listen on HTTP instead
-Annoyingly spent a lot of time trying to figure out why the port value I had wasn't the port I was listening on - turns out I was logging the client port, not the server port.
-Haven't used Go in ages so took a little time to shake off the rust
+* Spent about 3-4 hours today working on this
+* Spent a good amount of time trying to figure out a clean way to spoof the calling IP address - resigned myself to faking it while running locally
+* Spent some time trying to write a more complex script that pinged the service to generate test data while spoofing the calling IP address, decided to just spoof it in the code itself and make a simple bash script tomorrow
+* Learned a decent amount about the way port management works on the OS level when calling TCP level resources
+* Was concerned about listening on the HTTP vs the TCP/IP level, but given the complexity around handling http requests gracefully opted to listen on HTTP instead
+* Annoyingly spent a lot of time trying to figure out why the port value I had wasn't the port I was listening on - turns out I was logging the client port, not the server port.
+* Haven't used Go in ages so took a little time to shake off the rust
 
 
 ## Things To Do
