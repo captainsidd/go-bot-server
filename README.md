@@ -38,7 +38,7 @@ For testing purposes - querying from localhost will give the same IP address ove
 
 `lookup/ipLookup.go` is an example of the type of documentation I would have for a normal method. I'm a firm believer that comments don't exist to explain HOW some code works - that's only needed if its a complicated section of code. They should rather explain WHY a function exists, and WHAT it does.
 
-I've commited the env vars file to the repo, even though that's terrible practice. This is so that y'all at Rockbot could run this yourselves. Don't worry, I'll rotate the keys and scrub the commit history when I'm done - there's a reminder in my calendar for it. The env vars only contains keys for [Supabase](https://supabase.com/), which is my database of choice.
+I've commited the env vars file to the repo, even though that's terrible practice. This is so that y'all at Rockbot could run this yourselves. Don't worry, I'll rotate the keys and scrub the commit history when I'm done - there's a reminder in my calendar for it. The env vars only contains keys for [Supabase](https://supabase.com/), which is my database of choice. That service also has a few guardrails to avoid exploitation from committing keys. I would NEVER do this in real-life scenario.
 
 I chose Supabase because its a free cloud DB ala Firebase. They allow for querying the DB through API calls, which makes it simple to use, even if there isn't an officially supported client in Go. Thankfully, there's [supabase-go](https://github.com/nedpals/supabase-go), which provides the minimal level of functionality I needed to make this MVP work.
 
