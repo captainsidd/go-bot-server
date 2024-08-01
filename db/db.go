@@ -22,12 +22,23 @@ func NewClient() (db *DB) {
 	}
 }
 
-func (db *DB) StoreRequest(request *models.DBRecord) {
+func (db *DB) StoreRequest(request *models.DBRecord) (*[]models.DBRecord, error) {
 	request.CreatedAt = time.Now().UTC()
 	var results []models.DBRecord
 	err := db.Client.DB.From("requests").Insert(request).Execute(&results)
 	if err != nil {
 		fmt.Println(err)
+		return nil, err
 	}
-	fmt.Println(results) // Inserted rows
+	return &results, nil // inserted rows
+}
+
+func (db *DB) GetLastRecords(count int) (*[]models.DBRecord, error) {
+	var results []models.DBRecord
+	err := db.Client.DB.From("requests").Select("*").Limit(count).Execute(&results)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	return &results, nil // fetched rows
 }

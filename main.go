@@ -1,12 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
 	"net"
 	"net/http"
-	"strconv"
 	"time"
 
 	"gobotserver/db"
@@ -30,6 +30,14 @@ func main() {
 		go startServer(port, addr)
 		// go listenOnPort(port)
 	}
+
+	go func() {
+		http.HandleFunc("/snapshot", snapshotHandler)
+		if err := http.ListenAndServe(":8080", nil); err != nil {
+			log.Fatalf("Failed to start /snapshot on port 8080: %v\n", err)
+		}
+		log.Println("DB Snapshots can be found at :8080/snapshot")
+	}()
 	// Prevent the main process from exiting immediately
 	select {}
 }
@@ -52,10 +60,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	remoteAddr := r.RemoteAddr
 	ip, _, err := net.SplitHostPort(remoteAddr)
 	if err != nil {
-		fmt.Printf("Error parsing remote address %s: %v\n", remoteAddr, err)
+		log.Printf("Error parsing remote address %s: %v\n", remoteAddr, err)
 		return
 	}
-	fmt.Printf("Connection from IP %s on Port %s at %s\n", ip, port, timestamp)
+	log.Printf("Connection from IP %s on Port %s at %s\n", ip, port, timestamp)
 
 	requestInfo := models.RequestInfo{
 		IPAddress: ip,
@@ -64,11 +72,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		Path:      r.URL.Path,
 	}
 
+	fmt.Fprintln(w, "HTTP 200/OK")
+
 	/* For local testing, spoof the calling IP address */
 	spoofedIP := fmt.Sprintf("%d.%d.%d.%d", rand.Intn(256), rand.Intn(256), rand.Intn(256), rand.Intn(256))
-	fmt.Printf("Spoofed IP: %s\n", spoofedIP)
+	log.Printf("Spoofed IP: %s\n", spoofedIP)
 	requestInfo.IPAddress = spoofedIP
-	fmt.Println(requestInfo)
 	dbRecord := requestInfo.ConvertToDBRecord()
 	dbRecord.CountryCode, dbRecord.City = lookup.LookupIPAddress(spoofedIP)
 
@@ -80,52 +89,24 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	addRequestToDB(dbRecord)
 }
 
-func listenOnPort(port int) {
-	address := fmt.Sprintf(":%d", port)
-	listener, err := net.Listen("tcp", address)
+func snapshotHandler(w http.ResponseWriter, r *http.Request) {
+	records, err := db.NewClient().GetLastRecords(25)
 	if err != nil {
-		fmt.Printf("Error listening on port %d: %v\n", port, err)
-		return
+		log.Println(err)
+		fmt.Fprintln(w, "Error fetching DB records")
 	}
-	defer listener.Close()
-	fmt.Printf("Listening on port %d\n", port)
-
-	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			fmt.Printf("Error accepting connection on port %d: %v\n", port, err)
-			continue
-		}
-		go handleConnection(conn, port)
-	}
-}
-
-func handleConnection(conn net.Conn, port int) {
-	// Find the IP & Port of the request
-	timestamp := time.Now().UTC()
-	remoteAddr := conn.RemoteAddr().String()
-	ip, _, err := net.SplitHostPort(remoteAddr)
+	jsonRecords, err := json.Marshal(records)
 	if err != nil {
-		fmt.Printf("Error parsing remote address %s: %v\n", remoteAddr, err)
-		return
+		log.Println(err)
+		fmt.Fprintln(w, "Error converting records to JSON")
 	}
-	fmt.Printf("Connection from IP %s on Port %d at %s\n", ip, port, timestamp)
-
-	requestInfo := models.RequestInfo{
-		IPAddress: ip,
-		Timestamp: timestamp,
-		Port:      strconv.Itoa(port),
-	}
-	// Close the connection
-	conn.Close()
-
-	// Lookup geography of IP address and add to DB
-	dbRecord := requestInfo.ConvertToDBRecord()
-	dbRecord.CountryCode, dbRecord.City = lookup.LookupIPAddress(requestInfo.IPAddress)
-	addRequestToDB(dbRecord)
+	fmt.Fprintln(w, string(jsonRecords))
 }
 
 func addRequestToDB(request *models.DBRecord) {
 	client := db.NewClient()
-	client.StoreRequest(request)
+	_, err := client.StoreRequest(request)
+	if err != nil {
+		log.Printf("Error inserting DB records: %v\n", err)
+	}
 }

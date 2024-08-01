@@ -14,11 +14,16 @@ This project is fairly straightforward: it accepts TCP connections on a variety 
 * Annoyingly spent a lot of time trying to figure out why the port value I had wasn't the port I was listening on - turns out I was logging the client port, not the server port.
 * Haven't used Go in ages so took a little time to shake off the rust
 
+## Day 2 log
+* Move the DB creds to env vars
+* Have an endpoint to return snapshot of db data
+* Cleaned up logging
+* Cleaned up error handling in DB layer
+
+
 
 ## Things To Do
 * Identify the ports and import them cleanly
-* Move the DB creds to env vars
-* Have an endpoint to return last 25 requests
 * Create bash script that pings service every 10 seconds
 * Create easy build command that starts service and scripts (Makefile, Dockerize)?
 * Write up README with intentions, challenges, learnings, future work
