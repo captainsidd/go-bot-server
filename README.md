@@ -2,13 +2,39 @@
 
 There's a lot of bots and crawlers out there. I'm curious to know where they come from.
 
-This project is fairly straightforward: it accepts HTTP connections on a variety of ports, and records the originating IP address of the request along with the port of the request. For example, if someone is trying to make a HTTP connection on port 22, we can infer that they're looking for ssh servers to potentially exploit.
+This project is fairly straightforward: it accepts HTTP connections on a variety of ports, and records the originating IP address of the request along with the port of the request.
 
 ## Usage
 
-This is a web server that listens for HTTP requests on the ports listed below. Not all of ever
+This is a web server that listens for HTTP requests on the ports listed below. To run the server and the test script which sends requests to a random port:
+
+```sh
+make run
+```
+
+To view a snapshot of the data in the database:
+
+```sh
+sh curl localhost:8080/snapshot
+```
+
+HTTP Ports:
+```
+	66
+	80
+	81
+	443
+	445
+	457
+	1080
+	1241
+	1352
+	1433
+```
 
 # Notes
+
+For testing purposes - querying from localhost will give the same IP address over and over again - I mocked the IP Address of the
 
 `lookup/ipLookup.go` is an example of the type of documentation I would have for a normal method. I'm a firm believer that comments don't exist to explain HOW some code works - that's only needed if its a complicated section of code. They should rather explain WHY a function exists, and WHAT it does.
 
@@ -20,7 +46,9 @@ To look up geolocation data, I'm using [IP-API](https://ip-api.com/docs/api:json
 
 ## Learnings & Challenges
 
+I initally started out trying to listen to TCP/IP, because that allows for more than just HTTP requests. For example, if someone is trying to make a TCP connection on port 22, we can infer that they're looking for ssh servers to potentially exploit. HTTP requests to port 22 are rare, but I'm sure there's a lot of crawlers trying to exploit port 22 through SSH. I had a version of this working that listened to TCP ports using the `net` package which worked well for handling non-HTTP protocols. However, gracefully handling HTTP protocols was proving tricky, and after spending a good amount of time on trying to figure that out, I opted to only use HTTP. I vaguely had remembered the difference between HTTP and other TCP based protocols from college, but had to get very familiar with it for this project.
 
+I also learned a little bit about the structure of assorted things like how to write a Makefile (have used them but never had to write my own + call multiple commands in parallel). I also ran into issues trying to spoof the IP address of a request, which I knew was on a lower level than the application layer. When that was too challenging to do with various other tooling, I opted to just mock the IP address data in the code itself rather than spoofing it in the request.
 
 ## Future Work
 
