@@ -15,7 +15,7 @@ make run
 To view a snapshot of the data in the database:
 
 ```sh
-sh curl localhost:8080/snapshot
+curl localhost:8080/snapshot
 ```
 
 HTTP Ports:
