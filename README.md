@@ -50,9 +50,7 @@ I also learned a little bit about the structure of assorted things like how to w
 
 ## Future Work
 
-I haven't tested this in the real world, which means my IP address splitting functionality may not actually work with real data. Spoofing the IP address is trickier as it can't be done from the application layer, which is why I couldn't test that locally.
-
-The next thing to do would be to put this up in the cloud. Dockerizing this and having it sit behind a publicly exposed, passthrough network load balancer would allow for it to gather real data. Unit tests and integration tests would also be good to have.
+I haven't tested this in the real world, which means my IP address splitting functionality may not actually work with real data. Spoofing the IP address is trickier as it can't be done from the application layer, which is why I couldn't test that locally. The next thing to do would be to put this up in the cloud. Dockerizing this and having it sit behind a publicly exposed, passthrough network load balancer would allow for it to gather real data. Unit tests and integration tests would also be good to have. I would also open up some ports that listened to non-HTTP ports for TCP connections, such as port 22 for SSH or 143 for IMAP. This would be done using the `net` package.
 
 ## Day 1 log
 
