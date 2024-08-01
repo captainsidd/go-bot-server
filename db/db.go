@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"gobotserver/models"
+	"os"
 	"time"
 
 	supa "github.com/nedpals/supabase-go"
@@ -13,8 +14,8 @@ type DB struct {
 }
 
 func NewClient() (db *DB) {
-	supabaseUrl := "https://svwwtzplqnbkpfzmambv.supabase.co"
-	supabaseKey := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2d3d0enBscW5ia3Bmem1hbWJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjI0NDA1NzcsImV4cCI6MjAzODAxNjU3N30.cTuKDqisefzdJaipIv4DOJN_-UgZXVx6kP-4xiApDCo"
+	supabaseUrl := os.Getenv("SUPABASE_URL")
+	supabaseKey := os.Getenv("SUPABASE_KEY")
 	supabase := supa.CreateClient(supabaseUrl, supabaseKey)
 	return &DB{
 		Client: supabase,

@@ -12,11 +12,18 @@ import (
 	"gobotserver/db"
 	"gobotserver/lookup"
 	"gobotserver/models"
+
+	"github.com/joho/godotenv"
 )
 
 var commonPorts = []int{80, 443, 21, 22, 25, 110, 143, 993, 995, 587}
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading ENV vars, unable to start.")
+	}
+
 	http.HandleFunc("/", handler)
 	for _, port := range commonPorts {
 		addr := fmt.Sprintf(":%d", port)
